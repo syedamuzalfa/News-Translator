@@ -1,0 +1,161 @@
+# newsapp/utils.py
+
+import requests
+from bs4 import BeautifulSoup
+from googletrans import Translator
+import re
+
+
+SECTIONS = {
+    "Editorial": "https://www.dawn.com/newspaper/editorial",
+    "Opinion": "https://www.dawn.com/newspaper/column"
+}
+
+translator = Translator()
+
+
+def get_article_links(base_url, max_pages=5):
+    """Fetch article links from Dawn with pagination (default 5 pages)."""
+    all_links = set()
+
+    for page in range(1, max_pages + 1):
+        url = f"{base_url}?page={page}" if page > 1 else base_url
+        response = requests.get(url)
+        if response.status_code != 200:
+            break
+
+        soup = BeautifulSoup(response.text, "html.parser")
+        articles = soup.find_all("article")
+
+        page_links = [
+            a.find("a")["href"]
+            for a in articles if a.find("a")
+        ]
+        if not page_links:
+            break  # stop if no more articles
+
+        all_links.update(page_links)
+
+    return list(all_links)
+
+
+from datetime import datetime
+from django.utils.timezone import now
+
+import re
+from datetime import datetime, date
+
+def clean_date_text(raw_text: str) -> str:
+    """
+    Normalize the date text so parsing works consistently.
+    Example: "September 26, 202508:25am" → "September 26, 2025 08:25am"
+    """
+    raw_text = raw_text.strip().lower()
+    # Fix "202508:25am" → "2025 08:25am"
+    raw_text = re.sub(r"(\d{4})(\d{1,2}:\d{2}[ap]m)", r"\1 \2", raw_text)
+    return raw_text
+
+
+def is_recent_article(date_text: str) -> bool:
+    """
+    Returns True if the article is from today (absolute date)
+    or marked as 'hours/minutes ago'.
+    """
+    if not date_text:
+        return False
+
+    text = clean_date_text(date_text)
+
+    # Case 1: Relative times
+    if "hour ago" in text or "hours ago" in text or "minute ago" in text or "minutes ago" in text:
+        return True
+
+    # Case 2: Absolute format → "September 26, 2025 05:18am"
+    try:
+        dt = datetime.strptime(text, "%B %d, %Y %I:%M%p")
+        if dt.date() == date.today(): 
+            return True
+    except ValueError:
+        pass
+
+    # Case 3: System ISO format → "2025-09-26"
+    try:
+        dt = datetime.strptime(text, "%Y-%m-%d")
+        if dt.date() == date.today():
+            return True
+    except ValueError:
+        pass
+
+    return False
+
+
+def log_article_status(url: str, date_text: str):
+    """Helper for pretty logging"""
+    if is_recent_article(date_text):
+        print(f"✅ Keeping {url}, published '{date_text}' (today)")
+    else:
+        print(f"⏩ Skipping {url}, published '{date_text}' (not recent)")
+
+
+def get_article_content(url):
+    response = requests.get(url, timeout=10)
+    response.raise_for_status()
+    soup = BeautifulSoup(response.text, "html.parser")
+
+    # Title
+    title_tag = soup.find("h2", class_="story__title")
+    title = title_tag.get_text(strip=True) if title_tag else "No Title"
+
+    # Content
+    story_div = soup.find("div", class_="story__content")
+    content = "\n".join(
+        p.get_text(strip=True) for p in story_div.find_all("p")
+    ) if story_div else ""
+
+    # Timestamp
+    date_tag = soup.find("span", class_="timestamp--time")
+    if not date_tag:
+        print(f"⚠️ No timestamp found for {url}")
+        return None
+
+    date_text = clean_date_text(date_tag.get_text(strip=True))
+    classes = date_tag.get("class", [])
+    today = now().date()
+    publish_date = None
+
+    # Case 1: "hours ago" / "minutes ago"
+    if "timeago" in classes:
+        if "hour" in date_text or "minute" in date_text:
+            publish_date = today
+            print(f"✅ Keeping {url}, published '{date_text}' (recent)")
+        else:
+            print(f"⏩ Skipping {url}, published '{date_text}' (not recent)")
+            return None
+    else:
+        # Case 2: absolute date → try parsing
+        try:
+            parsed = datetime.strptime(date_text, "%B %d, %Y %I:%M%p")
+        except ValueError:
+            try:
+                parsed = datetime.strptime(date_text, "%B %d, %Y")
+            except ValueError:
+                print(f"⏩ Skipping {url}, published '{date_text}' (bad format)")
+                return None
+
+        publish_date = parsed.date()
+        if publish_date == today:
+            print(f"✅ Keeping {url}, published '{date_text}' (today)")
+        else:
+            print(f"⏩ Skipping {url}, published '{date_text}' (not today)")
+            return None
+
+    return {"title": title, "content": content, "publish_date": publish_date}
+
+def translate_text(text, src="en", dest="ur"):
+    parts = text.split("\n")
+    translated_parts = []
+    for part in parts:
+        if part.strip():
+            translated = translator.translate(part, src=src, dest=dest)
+            translated_parts.append(translated.text)
+    return "\n".join(translated_parts)

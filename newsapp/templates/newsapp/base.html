@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dawn Editorials & Opinions</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Poppins', sans-serif; background:#f7f9fc; margin:0; padding:0; }
+    header { background: linear-gradient(90deg, #005f99, #0088cc); color:white; text-align:center; padding:20px; }
+    header h1 { margin:0; font-size:26px; font-weight:600; }
+    .container { max-width:1100px; margin:30px auto; padding:0 15px; }
+    .article { background:white; margin-bottom:30px; padding:25px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.08); }
+    .date-label { font-size:13px; color:#777; margin-bottom:10px; }
+    .title-columns { display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; }
+    .title-en { font-size:18px; font-weight:600; }
+    .title-ur { font-family:'Noto Nastaliq Urdu', serif; direction:rtl; font-size:20px; }
+    .columns { display:flex; gap:20px; flex-wrap:wrap; }
+    .col { flex:1; min-width:45%; text-align:justify; line-height:1.6; }
+    .english { font-size:15px; color:#333; }
+    .urdu { direction:rtl; font-family:'Noto Nastaliq Urdu', serif; font-size:18px; color:#444; }
+    footer { text-align:center; padding:15px; background:#f0f4f8; margin-top:40px; font-size:14px; color:#555; }
+    a.button { display:inline-block; margin-top:20px; padding:10px 20px; background:#005f99; color:white; text-decoration:none; border-radius:8px; }
+  
+  </style>
+</head>
+<body>
+  <header>
+    <h1> Editorials & Opinions (English ⇄ Urdu)</h1>
+  </header>
+
+  <div class="container">
+    {% block content %}{% endblock %}
+  </div>
+
+  <footer>
+    Powered by Zalforum Tech <br> News fetched from Dawn.com
+  </footer>
+</body>
+</html>

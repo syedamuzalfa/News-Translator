@@ -1,0 +1,42 @@
+{% extends "newsapp/base.html" %}
+{% block content %}
+
+<div style="text-align:center;">
+  <a href="{% url 'archive' %}" class="button">📚Yesterday’s Editorials & Opinions</a>
+</div>
+<h2>📰 Today’s Editorials</h2>
+{% for article in editorials %}
+  <div class="article">
+    <div class="date-label">{{ article.created_at|date:"M d, Y" }}</div>
+    <div class="title-columns">
+      <div class="title-en">{{ article.english_title }}</div>
+      <div class="title-ur">{{ article.urdu_title }}</div>
+    </div>
+    <div class="columns">
+      <div class="col english">{{ article.english_content|linebreaks }}</div>
+      <div class="col urdu">{{ article.urdu_content|linebreaks }}</div>
+    </div>
+  </div>
+{% empty %}
+  <p>No editorials today.</p>
+{% endfor %}
+
+<h2>📝 Today’s Opinions</h2>
+{% for article in opinions %}
+  <div class="article">
+    <div class="date-label"> {{ article.created_at|date:"M d, Y" }}</div>
+    <div class="title-columns">
+      <div class="title-en">{{ article.english_title }}</div>
+      <div class="title-ur">{{ article.urdu_title }}</div>
+    </div>
+    <div class="columns">
+      <div class="col english">{{ article.english_content|linebreaks }}</div>
+      <div class="col urdu">{{ article.urdu_content|linebreaks }}</div>
+    </div>
+  </div>
+{% empty %}
+  <p>No opinions today.</p>
+{% endfor %}
+
+
+{% endblock %}

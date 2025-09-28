@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dawn Editorials & Opinions - Bilingual</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f7f9fc;
+      color: #333;
+    }
+    header {
+      background: linear-gradient(90deg, #005f99, #0088cc);
+      color: white;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    header h1 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 600;
+    }
+    .container {
+      max-width: 1100px;
+      margin: 30px auto;
+      padding: 0 15px;
+    }
+    .article {
+      background: white;
+      margin-bottom: 30px;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .article:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    .section-title {
+      font-size: 22px;
+      font-weight: 600;
+      margin: 40px 0 20px;
+      color: #005f99;
+    }
+    .date-label {
+      font-size: 13px;
+      color: #777;
+      margin-bottom: 15px;
+    }
+    .title-columns {
+      display: flex;
+      justify-content: space-between;
+      gap: 25px;
+      margin-bottom: 15px;
+    }
+    .title-en {
+      flex: 1;
+      font-size: 25px;
+      font-weight: 600;
+      color: #020202ff;
+      
+    }
+    .title-en a {
+      text-decoration: none;
+      color: inherit;
+    }
+    .title-en a:hover {
+      text-decoration: underline;
+    }
+    .title-ur {
+      flex: 1;
+      direction: rtl;
+      font-family: 'Noto Nastaliq Urdu', serif;
+      font-size: 22px;
+      font-weight: 400;
+      color: #222;
+    }
+    .columns {
+      display: flex;
+      gap: 25px;
+      flex-wrap: wrap;
+    }
+    .col {
+      flex: 1;
+      min-width: 45%;
+      line-height: 1.6;
+      text-align: justify;
+    }
+    .urdu {
+      direction: rtl;
+      font-family: 'Noto Nastaliq Urdu', serif;
+      font-size: 18px;
+      color: #444;
+    }
+    .english {
+      font-size: 16px;
+      color: #333;
+    }
+    footer {
+      text-align: center;
+      padding: 15px;
+      background: #f0f4f8;
+      margin-top: 40px;
+      font-size: 14px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Dawn Editorials & Opinions (English ⇄ Urdu)</h1>
+  </header>
+
+  <div class="container">
+
+    <!-- Editorials -->
+    <div class="section-title">📰 Editorials</div>
+    {% for article in editorials %}
+      <div class="article">
+        <div class="date-label">{{ article.created_at|date:"M d, Y" }}</div>
+
+        <div class="title-columns">
+          <div class="title-en">
+            <a href="{{ article.url }}" target="_blank">{{ article.english_title }}</a>
+          </div>
+          <div class="title-ur">
+            {{ article.urdu_title }}
+          </div>
+        </div>
+
+        <div class="columns">
+          <div class="col english">
+            {{ article.english_content|linebreaks }}
+          </div>
+          <div class="col urdu">
+            {{ article.urdu_content|linebreaks }}
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p>No editorials available.</p>
+    {% endfor %}
+
+    <!-- Opinions -->
+    <div class="section-title">📝 Opinions</div>
+    {% for article in opinions %}
+      <div class="article">
+        <div class="date-label"> {{ article.created_at|date:"M d, Y" }}</div>
+
+        <div class="title-columns">
+          <div class="title-en">
+            <a href="{{ article.url }}" target="_blank">{{ article.english_title }}</a>
+          </div>
+          <div class="title-ur">
+            {{ article.urdu_title }}
+          </div>
+        </div>
+
+        <div class="columns">
+          <div class="col english">
+            {{ article.english_content|linebreaks }}
+          </div>
+          <div class="col urdu">
+            {{ article.urdu_content|linebreaks }}
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p>No opinions available.</p>
+    {% endfor %}
+
+  </div>
+
+  <footer>
+    Powered by Zalforum Tech <br> News fetched from Dawn.com
+  </footer>
+</body>
+</html>
