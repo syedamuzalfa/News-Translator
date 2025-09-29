@@ -3,11 +3,12 @@ beautifulsoup4==4.12.2
 certifi==2024.8.30
 charset-normalizer==3.3.2
 Django==4.2.16
-googletrans==4.0.0-rc1
-idna==3.7
 lxml==4.9.3
 requests==2.32.3
 soupsieve==2.5
 sqlparse==0.5.1
 tzdata==2024.2
 urllib3==2.2.2
+googletrans==4.0.0-rc1
+httpx>=0.24.1
+idna>=2.5,<4
