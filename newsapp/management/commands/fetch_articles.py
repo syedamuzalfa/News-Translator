@@ -8,7 +8,7 @@ from django.utils.timezone import now
 from datetime import timedelta
 
 # Delete older than 10 days
-cutoff_date = now() - timedelta(days=5)
+cutoff_date = now() - timedelta(days=3)
 Article.objects.filter(created_at__lt=cutoff_date).delete()
 
 

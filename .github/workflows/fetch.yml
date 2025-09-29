@@ -1,0 +1,25 @@
+name: Daily Fetch Articles
+
+on:
+  schedule:
+    - cron: "0 2 * * *"   # runs every day at 03:00 UTC
+  workflow_dispatch:       # allows manual run
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run fetch command
+        run: python manage.py fetch_articles
