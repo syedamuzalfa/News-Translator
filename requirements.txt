@@ -9,6 +9,4 @@ soupsieve==2.5
 sqlparse==0.5.1
 tzdata==2024.2
 urllib3==2.2.2
-googletrans==4.0.0-rc1
-httpx>=0.24.1
-idna>=2.5,<4
+googletrans-py==4.0.0
